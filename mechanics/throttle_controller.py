@@ -12,13 +12,13 @@ class ThrottleController:
         self.servoController = ServoController(self.CHANNEL)
 
     # Takes a steer value between OFF and FULL and calculates it to the PWM
-    def calculateSteering(self, throttle):
+    def calculate_steering(self, throttle):
         difference = self.fullvalue - self.offvalue
-        return self.offvalue + (self.offvalue * difference)
+        return self.offvalue + (difference * throttle)
 
-    def setThrottle(self, steerValue):
-        pwmVal = self.calculateSteering(steerValue)
-        self.servoController.set_pwm(pwmVal)
+    def set_throttle(self, steervalue):
+        pwmval = self.calculateSteering(steervalue)
+        self.servoController.set_pwm(pwmval)
 
-    def killThrottle(self):
-        self.setThrottle(0)
+    def kill_throttle(self):
+        self.set_throttle(0)

@@ -6,17 +6,17 @@ class SteeringController:
     RIGHT = 1
     CHANNEL = 0
 
-    def __init__(self, leftValue=290, rightValue=490):
-        self.leftValue = leftValue
-        self.rightValue = rightValue
+    def __init__(self, leftvalue=290, rightvalue=490):
+        self.leftvalue = leftvalue
+        self.rightvalue = rightvalue
         self.servoController = ServoController(self.CHANNEL)
 
     # Takes a steer value between LEFT and RIGHT and calculates it to the PWM
-    def calculateSteering(self, steerValue):
-        difference = self.rightValue - self.leftValue
-        midpoint = self.leftValue + difference/2
-        return midpoint + (steerValue * difference/2)
+    def calculate_steering(self, steervalue):
+        difference = self.rightvalue - self.leftvalue
+        midpoint = self.leftvalue + difference/2
+        return midpoint + (steervalue * difference/2)
 
-    def steer(self, steerValue):
-        pwmVal = self.calculateSteering(steerValue)
+    def steer(self, steervalue):
+        pwmVal = self.calculate_steering(steervalue)
         self.servoController.set_pwm(pwmVal)
