@@ -17,7 +17,7 @@ class ThrottleController:
         return int(self.offvalue + (difference * throttle))
 
     def set_throttle(self, steervalue):
-        pwmval = self.calculateSteering(steervalue)
+        pwmval = self.calculate_steering(steervalue)
         print("Setting steering to " + str(pwmval))
         self.servoController.set_pwm(pwmval)
 
