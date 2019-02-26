@@ -1,5 +1,5 @@
-from .steering_controller import SteeringController
-from .throttle_controller import ThrottleController
+from mechanics.steering_controller import SteeringController
+from mechanics.throttle_controller import ThrottleController
 
 throttle = ThrottleController(0, 100)
 steering = SteeringController()

@@ -1,5 +1,4 @@
-from .servo_controller import ServoController
-
+from mechanics.servo_controller import ServoController
 
 class SteeringController:
     LEFT = -1
