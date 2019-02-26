@@ -3,7 +3,7 @@ from mechanics.servo_controller import ServoController
 class SteeringController:
     LEFT = -1
     RIGHT = 1
-    CHANNEL = 0
+    CHANNEL = 1
 
     def __init__(self, leftvalue=290, rightvalue=490):
         self.leftvalue = leftvalue
@@ -14,8 +14,9 @@ class SteeringController:
     def calculate_steering(self, steervalue):
         difference = self.rightvalue - self.leftvalue
         midpoint = self.leftvalue + difference/2
-        return midpoint + (steervalue * difference/2)
+        return int(midpoint + (steervalue * difference/2))
 
     def steer(self, steervalue):
-        pwmVal = self.calculate_steering(steervalue)
-        self.servoController.set_pwm(pwmVal)
+        pwm_val = self.calculate_steering(steervalue)
+        print("Setting steering to " + str(pwm_val))
+        self.servoController.set_pwm(pwm_val)
