@@ -1,13 +1,21 @@
 from mechanics.steering_controller import SteeringController
 from mechanics.throttle_controller import ThrottleController
+from mechanics.websocket_controller import websocket_controller
 
 throttle = ThrottleController()
 steering = SteeringController()
+controller = websocket_controller()
 key = ''
 
+
+async def callback(websocket, path):
+    name = await websocket.recv()
+    key = name[-1]
+
 try:
+    controller.start_connection(callback)
     while True:
-        key = input()
+        #key = input()
         if key is 'w':
             throttle.set_throttle(.50)
         if key is 'a':
