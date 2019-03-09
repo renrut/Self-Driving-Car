@@ -3,7 +3,7 @@ import socketserver
 from http import server
 from mechanics.camera_controller import CameraController
 
-
+camera = CameraController()
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -12,14 +12,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Location', '/index.html')
             self.end_headers()
         elif self.path == '/index.html':
-            f = open('../web/frontpage.html', 'rb')
+            f = open('./web/frontpage.html', 'rb')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html')
             self.end_headers()
             self.wfile.write(f.read())
             f.close()
         elif self.path == '/js/socketin.js':
-            f = open('../web/js/socketin.js', 'rb')
+            f = open('./web/js/socketin.js', 'rb')
             self.send_response(200)
             self.send_header('Content-Type', 'text/javascript')
             self.end_headers()
@@ -33,6 +33,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             try:
+                output = camera.get_streaming_output()
                 while True:
                     with output.condition:
                         output.condition.wait()
@@ -55,11 +56,10 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-with CameraController() as camera:
-    camera.start()
-    try:
-        address = ('', 8000)
-        server = StreamingServer(address, StreamingHandler)
-        server.serve_forever()
-    finally:
-        camera.stop_recording()
+camera.start()
+try:
+    address = ('', 8000)
+    server = StreamingServer(address, StreamingHandler, camera)
+    server.serve_forever()
+finally:
+    camera.stop()

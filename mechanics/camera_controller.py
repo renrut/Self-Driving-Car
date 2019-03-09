@@ -33,3 +33,6 @@ class CameraController:
 
     def stop(self):
         self.camera.stop_recording()
+
+    def get_streaming_output(self):
+        return self.output
