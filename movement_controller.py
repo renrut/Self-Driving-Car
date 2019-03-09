@@ -2,25 +2,13 @@ from mechanics.steering_controller import SteeringController
 from mechanics.throttle_controller import ThrottleController
 from mechanics.websocket_controller import websocket_controller
 
-throttle = ThrottleController()
-steering = SteeringController()
+config = open("steering.config", "r")
+steeringrange = config.readline().split(',')
+throttlerange = config.readline().split(',')
+
+throttle = ThrottleController(throttlerange[0], throttlerange[1], throttlerange[2])
+steering = SteeringController(steeringrange[0], steeringrange[1])
 controller = websocket_controller()
-key = ''
-
-def process_input(key):
-    if key is 'w':
-        throttle.set_throttle(.50)
-    if key is 'd':
-        steering.steer(-.75)
-    if key is 'a':
-        steering.steer(.75)
-    if key is 's':
-        throttle.set_throttle(-.2)
-    if key is 'r':
-        throttle.kill_throttle()
-        steering.steer(0)
-
-
 
 async def callback(websocket, path):
     try:
