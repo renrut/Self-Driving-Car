@@ -18,7 +18,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(f.read())
             f.close()
-        elif self.path.startswith('/js') or self.path.startsWith('/css'):
+        elif self.path.startswith('/js') or self.path.startswith('/css'):
             #serving assets
             f = open('./web' + self.path, 'rb')
             self.send_response(200)
