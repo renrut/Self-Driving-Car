@@ -5,9 +5,9 @@ class ThrottleController:
     OFF = 0
     FULL = 1
     CHANNEL = 0
-    controller = None,
-    max_pulse = 300,
-    min_pulse = 490,
+    controller = None
+    max_pulse = 300
+    min_pulse = 490
     zero_pulse = 350
 
     def __init__(self, offvalue, fullvalue):
