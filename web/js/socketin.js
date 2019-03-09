@@ -6,16 +6,16 @@ socket.onopen = function(){
     document.onkeypress = function (e) {
         e = e || window.event;
         var code = String.fromCharCode(e.keyCode);
-        if code == 'w' {
+        if (code == 'w') {
             socket.send("0.0,0.5")
         }
-        else if code == 'a' {
+        else if (code == 'a') {
             socket.send("0.75,0.0")
         }
-        else if code == 's' {
+        else if (code == 's') {
             socket.send("0.0,-0.2")
         }
-        else if code == 'd' {
+        else if (code == 'd') {
             socket.send("-0.75,0.0")
         }
     };
