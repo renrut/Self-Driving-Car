@@ -34,4 +34,4 @@ try:
     controller.event_loop()
 finally:
     steering.steer(0)
-    throttle.set_throttle(0)
+    throttle.kill_throttle()
