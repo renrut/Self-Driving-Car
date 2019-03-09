@@ -6,8 +6,18 @@ socket.onopen = function(){
     document.onkeypress = function (e) {
         e = e || window.event;
         var code = String.fromCharCode(e.keyCode);
-        console.log("sending:" + code)
-        socket.send(code);
+        if e == 'w' {
+            socket.send("0.0,0.5")
+        }
+        else if e == 'a' {
+            socket.send("0.75,0.0")
+        }
+        else if e == 's' {
+            socket.send("0.0,-0.2")
+        }
+        else if e == 'd' {
+            socket.send("-0.75,0.0")
+        }
     };
 }
 

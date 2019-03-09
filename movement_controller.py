@@ -24,10 +24,11 @@ def process_input(key):
 
 async def callback(websocket, path):
     while True:
-        name = await websocket.recv()
-        key = name[-1]
-        print(key)
-        process_input(key)
+        data = await websocket.recv().split(',')
+        turn = float(data[0])
+        speed = float(data[1])
+        steering.steer(turn)
+        throttle.set_throttle(speed)
 
 try:
     controller.start_connection(callback)
