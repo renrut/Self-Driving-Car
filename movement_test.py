@@ -1,7 +1,7 @@
 from mechanics.steering_controller import SteeringController
 from mechanics.throttle_controller import ThrottleController
 
-throttle = ThrottleController(0, 100)
+throttle = ThrottleController()
 steering = SteeringController()
 key = ''
 
@@ -16,6 +16,7 @@ try:
             steering.steer(.75)
         if key is 's':
             throttle.set_throttle(0)
+            steering.steer(0)
 finally:
     steering.steer(0)
     throttle.set_throttle(0)

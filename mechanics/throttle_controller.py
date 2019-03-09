@@ -4,26 +4,24 @@ from mechanics.servo_controller import ServoController
 class ThrottleController:
     OFF = 0
     FULL = 1
-    CHANNEL = 0
+    CHANNEL = 2
     controller = None
-    max_pulse = 300
     min_pulse = 490
-    zero_pulse = 350
 
-    def __init__(self, offvalue, fullvalue):
-        self.offvalue = offvalue
-        self.fullvalue = fullvalue
+    def __init__(self, zero_pulse=300, max_pulse=450):
+        self.zero_pulse = zero_pulse
+        self.max_pulse = max_pulse
         self.servoController = ServoController(self.CHANNEL)
         self.servoController.set_pwm(self.zero_pulse)
 
-    # Takes a steer value between OFF and FULL and calculates it to the PWM
-    def calculate_steering(self, throttle):
-        difference = self.max_pulse - self.min_pulse
-        return int(self.min_pulse + (difference * throttle))
+    # Takes a throttle value between OFF and FULL and calculates it to the PWM
+    def calculate_throttle(self, throttle):
+        difference = self.zero_pulse - self.max_pulse
+        return int(self.zero_pulse - (difference * throttle))
 
-    def set_throttle(self, steervalue):
-        pwmval = self.calculate_steering(steervalue)
-        print("Setting steering to " + str(pwmval))
+    def set_throttle(self, throttlevalue):
+        pwmval = self.calculate_throttle(throttlevalue)
+        print("Mapped " + str(throttlevalue) + " to " + str(pwmval))
         self.servoController.set_pwm(pwmval)
 
     def kill_throttle(self):
