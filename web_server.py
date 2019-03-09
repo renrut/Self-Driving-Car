@@ -18,8 +18,9 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(f.read())
             f.close()
-        elif self.path == '/js/socketin.js':
-            f = open('./web/js/socketin.js', 'rb')
+        elif self.path.startsWith('/js') or self.path.startsWith('/css'):
+            #serving assets
+            f = open('./web' + self.path, 'rb')
             self.send_response(200)
             self.send_header('Content-Type', 'text/javascript')
             self.end_headers()
