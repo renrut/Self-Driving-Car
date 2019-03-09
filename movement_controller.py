@@ -24,7 +24,8 @@ def process_input(key):
 
 async def callback(websocket, path):
     while True:
-        data = await websocket.recv().split(',')
+        datastr = await websocket.recv()
+        data = datastr.split(',')
         turn = float(data[0])
         speed = float(data[1])
         steering.steer(turn)
