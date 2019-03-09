@@ -6,11 +6,11 @@ class ThrottleController:
     FULL = 1
     CHANNEL = 2
     controller = None
-    min_pulse = 490
 
-    def __init__(self, zero_pulse=300, max_pulse=450):
+    def __init__(self, zero_pulse=350, max_pulse=250, min_pulse=490):
         self.zero_pulse = zero_pulse
         self.max_pulse = max_pulse
+        self.min_pulse = min_pulse
         self.servoController = ServoController(self.CHANNEL)
         self.servoController.set_pwm(self.zero_pulse)
 

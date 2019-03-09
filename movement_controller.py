@@ -7,6 +7,20 @@ steering = SteeringController()
 controller = websocket_controller()
 key = ''
 
+def process_input(key):
+    if key is 'w':
+        throttle.set_throttle(.50)
+    if key is 'd':
+        steering.steer(-.75)
+    if key is 'a':
+        steering.steer(.75)
+    if key is 's':
+        throttle.set_throttle(-.2)
+    if key is 'r':
+        throttle.kill_throttle()
+        steering.steer(0)
+
+
 
 async def callback(websocket, path):
     while True:
@@ -21,16 +35,3 @@ try:
 finally:
     steering.steer(0)
     throttle.set_throttle(0)
-
-def process_input(key):
-#key = input()
-    if key is 'w':
-        throttle.set_throttle(.50)
-    if key is 'a':
-        steering.steer(-.75)
-    if key is 'd':
-        steering.steer(.75)
-    if key is 's':
-        throttle.set_throttle(0)
-        steering.steer(0)
-
