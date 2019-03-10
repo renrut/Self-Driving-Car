@@ -15,11 +15,19 @@ async def callback(websocket, path):
     try:
         while True:
             datastr = await websocket.recv()
-            data = datastr.split(',')
-            turn = float(data[0])
-            speed = float(data[1])
-            steering.steer(turn)
-            throttle.set_throttle(speed)
+            if datastr.startswith("drive "):
+                datastr.replace("drive ", "")
+                data = datastr.split(',')
+                turn = float(data[0])
+                speed = float(data[1])
+                steering.steer(turn)
+                throttle.set_throttle(speed)
+            elif datastr.startswith("record"):
+                print("recording")
+            elif datastr.startswith("stop"):
+                print("stopping recording")
+
+
     except:
         throttle.set_throttle(0)
         steering.steer(0)

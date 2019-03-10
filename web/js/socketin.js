@@ -7,7 +7,7 @@ var set = new Set(); // You could also use an array
 
 console.log("Conn open...");
 
-	var sendInput = function()
+	var sendDriveInput = function()
 	{
 		var throttle = 0;
 		var steering = 0;
@@ -27,12 +27,24 @@ console.log("Conn open...");
 		{
 			steering -= .5;
 		}
-		var send = steering.toString() + "," + throttle.toString();
+		var send = "drive " + steering.toString() + "," + throttle.toString();
         console.log("Sending" + send);
 		socket.send(send);
 	}
 
-	onkeydown = onkeyup = function(e){
+    var sendRecord = function()
+	{
+        socket.send("record");
+	}
+
+	var sendStop = function()
+	{
+        socket.send("stop");
+	}
+
+
+	onkeydown = onkeyup = function(e)
+	{
 	    e = e || event; // to deal with IE
 	    if(e.type == 'keydown')
 	    {
@@ -42,7 +54,17 @@ console.log("Conn open...");
 	    {
 			set.delete(String.fromCharCode(e.keyCode).toLowerCase())
 	    }
-	    sendInput();
+	    sendDriveInput();
+	}
+
+	document.getElementById("record-button").onclick = function(e)
+	{
+	    sendRecord();
+	}
+
+	document.getElementById("stop-button").onclick = function(e)
+	{
+	    sendStop();
 	}
 }
 
