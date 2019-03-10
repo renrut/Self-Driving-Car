@@ -37,5 +37,5 @@ class CameraController:
     def get_streaming_output(self):
         return self.output
 
-    def capture_still(self):
-        self.camera.capture('foo.jpg', use_video_port=True)
+    def capture_still(self, filename):
+        self.camera.capture(filename, use_video_port=True)

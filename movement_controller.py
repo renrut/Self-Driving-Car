@@ -1,6 +1,7 @@
 from mechanics.steering_controller import SteeringController
 from mechanics.throttle_controller import ThrottleController
 from mechanics.websocket_controller import websocket_controller
+from mechanics.camera_controller import CameraController
 
 config = open("steering.config", "r")
 steeringrange = config.readline().split(',')
@@ -10,6 +11,7 @@ steering = SteeringController(int(steeringrange[0]), int(steeringrange[1]))
 throttle = ThrottleController(int(throttlerange[0]), int(throttlerange[1]), int(throttlerange[2]))
 
 controller = websocket_controller()
+camera = CameraController()
 
 async def callback(websocket, path):
     try:
@@ -33,6 +35,7 @@ async def callback(websocket, path):
         steering.steer(0)
 
 try:
+    camera.capture_still("test.jpg")
     controller.start_connection(callback)
     controller.event_loop()
 finally:
