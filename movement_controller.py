@@ -16,7 +16,7 @@ async def callback(websocket, path):
         while True:
             datastr = await websocket.recv()
             if datastr.startswith("drive "):
-                datastr.replace("drive ", "")
+                datastr = datastr.replace("drive ", "")
                 data = datastr.split(',')
                 turn = float(data[0])
                 speed = float(data[1])

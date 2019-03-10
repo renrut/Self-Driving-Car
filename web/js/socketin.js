@@ -28,7 +28,7 @@ console.log("Conn open...");
 			steering -= .5;
 		}
 		var send = "drive " + steering.toString() + "," + throttle.toString();
-        console.log("Sending" + send);
+        console.log("Sending " + send);
 		socket.send(send);
 	}
 
