@@ -6,8 +6,9 @@ config = open("steering.config", "r")
 steeringrange = config.readline().split(',')
 throttlerange = config.readline().split(',')
 
-throttle = ThrottleController(int(throttlerange[0]), int(throttlerange[1]), int(throttlerange[2]))
 steering = SteeringController(int(steeringrange[0]), int(steeringrange[1]))
+throttle = ThrottleController(int(throttlerange[0]), int(throttlerange[1]), int(throttlerange[2]))
+
 controller = websocket_controller()
 
 async def callback(websocket, path):
