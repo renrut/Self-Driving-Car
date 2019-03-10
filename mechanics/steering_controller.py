@@ -14,7 +14,7 @@ class SteeringController:
     def calculate_steering(self, steervalue):
         difference = self.rightvalue - self.leftvalue
         midpoint = self.leftvalue + difference/2
-        return int(midpoint - (steervalue * difference/2))
+        return int(midpoint + (steervalue * difference/2))
 
     def steer(self, steervalue):
         pwm_val = self.calculate_steering(steervalue)

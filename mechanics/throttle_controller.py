@@ -25,4 +25,4 @@ class ThrottleController:
         self.servoController.set_pwm(pwmval)
 
     def kill_throttle(self):
-        self.set_throttle(-.2)
+        self.set_throttle(0)
