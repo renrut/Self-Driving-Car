@@ -1,10 +1,11 @@
 import logging
 import socketserver
-from http import server
+from aiohttp import web
+import asyncio
+import websockets
 from mechanics.camera_controller import CameraController
 from mechanics.steering_controller import SteeringController
 from mechanics.throttle_controller import ThrottleController
-from mechanics.websocket_controller import websocket_controller
 
 config = open("config/steering.config", "r")
 steeringrange = config.readline().split(',')
@@ -15,58 +16,40 @@ throttle = ThrottleController(int(throttlerange[0]), int(throttlerange[1]), int(
 
 camera = CameraController()
 
-class StreamingHandler(server.BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(301)
-            self.send_header('Location', '/index.html')
-            self.end_headers()
-        elif self.path == '/index.html':
-            f = open('./web/frontpage.html', 'rb')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.end_headers()
-            self.wfile.write(f.read())
-            f.close()
-        elif self.path.startswith('/js') or self.path.startswith('/css'):
-            #serving assets
-            f = open('./web' + self.path, 'rb')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/javascript')
-            self.end_headers()
-            self.wfile.write(f.read())
-            f.close()
-        elif self.path == '/stream.mjpg':
-            self.send_response(200)
-            self.send_header('Age', 0)
-            self.send_header('Cache-Control', 'no-cache, private')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
-            self.end_headers()
-            try:
-                output = camera.get_streaming_output()
-                while True:
-                    with output.condition:
-                        output.condition.wait()
-                        frame = output.frame
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
-            except Exception as e:
-                logging.warning(
-                    'Removed streaming client %s: %s',
-                    self.client_address, str(e))
-        else:
-            self.send_error(404)
-            self.end_headers()
-class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
-    allow_reuse_address = True
-    daemon_threads = True
+async def handle_index(request):
+    print("Index")
+    return web.FileResponse('./web/frontpage.html')
+
+
+async def handle_resources_js(request):
+    name = request.match_info.get('name')
+    print("Js:" + name)
+    return web.FileResponse('./web/js/' + name)
+
+async def handle_resources_css(request):
+    name = request.match_info.get('name')
+    print("Css:" + name)
+    return web.FileResponse('./web/css/' + name)
+
+
+async def handle_stream(request):
+    print("Stream")
+    # try:
+    #     output = camera.get_streaming_output()
+    #     response = web.StreamResponse()
+    #     response.content_type = 'multipart/x-mixed-replace;boundary=ffserver'
+    #     while True:
+    #         with output.condition:
+    #             output.condition.wait()
+    #             frame = output.frame
+    #         data = frame
+    #         response.write(data)
+    # except Exception as e:
+    #     print("Exception")
+
 
 async def callback(websocket, path):
+    print("callback called")
     try:
         while True:
             datastr = await websocket.recv()
@@ -88,15 +71,22 @@ async def callback(websocket, path):
         steering.steer(0)
 
 try:
+    app = web.Application()
+    app.add_routes([web.get('/', handle_index),
+                    web.get('/js/{name}', handle_resources_js),
+                    web.get('/css/{name}', handle_resources_css),
+                    web.get('/stream.mjpg', handle_stream)])
     camera.start()
-    controller = websocket_controller()
-    controller.start_connection(callback)
-    controller.event_loop()
     address = ('', 8000)
-    server = StreamingServer(address, StreamingHandler, camera)
-    server.serve_forever()
+    socketserver = websockets.serve(callback, '0.0.0.0', 8765)
+    asyncio.get_event_loop().run_until_complete(socketserver)
+    print("serving")
+    asyncio.get_event_loop().run_until_complete(web.run_app(app))
+    print("serving socket")
+    asyncio.get_event_loop().run_forever()
 
 finally:
+    print("Exiting")
     steering.steer(0)
     throttle.kill_throttle()
     camera.stop()
