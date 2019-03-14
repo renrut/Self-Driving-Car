@@ -11,19 +11,20 @@ console.log("Conn open...");
 	{
 		var throttle = 0;
 		var steering = 0;
-		if(set.has('w'))
+		if(set.has('w') || set.has("&"))
 		{
 			throttle += .5;
 		}
-		if(set.has('s'))
+		if(set.has('s') || set.has("("))
 		{
 			throttle -= .5;
+			//
 		}
-		if(set.has('a'))
+		if(set.has('a') || set.has("%"))
 		{
 			steering += .5;
 		}
-		if(set.has('d'))
+		if(set.has('d') || set.has("'"))
 		{
 			steering -= .5;
 		}
@@ -48,6 +49,7 @@ console.log("Conn open...");
 	    e = e || event; // to deal with IE
 	    if(e.type == 'keydown')
 	    {
+	        console.log(e.keyCode + " " + String.fromCharCode(e.keyCode).toLowerCase())
 	    	set.add(String.fromCharCode(e.keyCode).toLowerCase())
 	    }
 	    if(e.type == 'keyup')
