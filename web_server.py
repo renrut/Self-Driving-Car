@@ -2,16 +2,6 @@ import logging
 import socketserver
 from http import server
 from mechanics.camera_controller import CameraController
-from mechanics.steering_controller import SteeringController
-from mechanics.throttle_controller import ThrottleController
-from mechanics.websocket_controller import websocket_controller
-
-config = open("config/steering.config", "r")
-steeringrange = config.readline().split(',')
-throttlerange = config.readline().split(',')
-
-steering = SteeringController(int(steeringrange[0]), int(steeringrange[1]))
-throttle = ThrottleController(int(throttlerange[0]), int(throttlerange[1]), int(throttlerange[2]))
 
 camera = CameraController()
 
@@ -62,41 +52,15 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         else:
             self.send_error(404)
             self.end_headers()
+
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-async def callback(websocket, path):
-    try:
-        while True:
-            datastr = await websocket.recv()
-            if datastr.startswith("drive "):
-                datastr = datastr.replace("drive ", "")
-                data = datastr.split(',')
-                turn = float(data[0])
-                speed = float(data[1])
-                steering.steer(turn)
-                throttle.set_throttle(speed)
-            elif datastr.startswith("record"):
-                print("recording")
-            elif datastr.startswith("stop"):
-                print("stopping recording")
-
-
-    except:
-        throttle.set_throttle(0)
-        steering.steer(0)
-
+camera.start()
 try:
-    camera.start()
-    controller = websocket_controller()
-    controller.start_connection(callback)
-    controller.event_loop()
     address = ('', 8000)
     server = StreamingServer(address, StreamingHandler, camera)
     server.serve_forever()
-
 finally:
-    steering.steer(0)
-    throttle.kill_throttle()
     camera.stop()
