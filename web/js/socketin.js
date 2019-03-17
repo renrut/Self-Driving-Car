@@ -18,7 +18,6 @@ console.log("Conn open...");
 		if(set.has('s') || set.has("("))
 		{
 			throttle -= .5;
-			//
 		}
 		if(set.has('a') || set.has("%"))
 		{
@@ -49,7 +48,6 @@ console.log("Conn open...");
 	    e = e || event; // to deal with IE
 	    if(e.type == 'keydown')
 	    {
-	        console.log(e.keyCode + " " + String.fromCharCode(e.keyCode).toLowerCase())
 	    	set.add(String.fromCharCode(e.keyCode).toLowerCase())
 	    }
 	    if(e.type == 'keyup')

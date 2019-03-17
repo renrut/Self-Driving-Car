@@ -32,6 +32,11 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     daemon_threads = True
 
 
-address = ('', 8000)
-server = StreamingServer(address, StreamingHandler)
-server.serve_forever()
+class WebServer:
+    PORT = 8000
+
+    def run(self):
+        print("Listening on port " + str(self.PORT))
+        self.address = ('', self.PORT)
+        self.server = StreamingServer(self.address, StreamingHandler)
+        self.server.serve_forever()

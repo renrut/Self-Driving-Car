@@ -9,6 +9,11 @@ class websocket_controller:
         self.server = None
 
     def start_connection(self, callback):
+        try:
+            asyncio.get_event_loop()
+        except:
+            asyncio.set_event_loop(asyncio.new_event_loop())
+
         self.server = websockets.serve(callback, '0.0.0.0', self.port)
         print("in start_connection")
         asyncio.get_event_loop().run_until_complete(self.server)
