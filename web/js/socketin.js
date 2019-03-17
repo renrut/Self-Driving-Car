@@ -32,6 +32,7 @@ console.log("Conn open...");
 		socket.send(send);
 	}
 
+
     var sendRecord = function()
 	{
         socket.send("record");
@@ -42,6 +43,47 @@ console.log("Conn open...");
         socket.send("stop");
 	}
 
+    let gamepad = null;
+
+	var loop = function()
+	{
+	    gamepad = navigator.getGamepads()[0];
+        if(gamepad == null)
+        {
+            return;
+        }
+        var x = 0;
+        var y = 0;
+        if(Math.abs(gamepad.axes[2]) > .05) {
+            x = gamepad.axes[2] * -1;
+        }
+        if(gamepad.buttons[7].pressed) {
+            y += gamepad.buttons[7].value;
+        }
+        if(gamepad.buttons[6].pressed) {
+            y -= gamepad.buttons[6].value;
+        }
+
+        var send = "drive " + x + "," + y;
+		socket.send(send);
+	}
+
+    var interval = null;
+    window.addEventListener("gamepadconnected", function(e) {
+      console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
+        gamepad = e.gamepad;
+        document.getElementById("gamepad-prompt").innerText = "Gamepad Connected"
+        interval = setInterval(loop, 1000/30)
+    });
+
+    window.addEventListener("gamepaddisconnected", function(e) {
+      console.log("Gamepad disconnected.");
+        document.getElementById("gamepad-prompt").innerText = "Gamepad Disconnected"
+        clearInterval(interval)
+        gamepad = null
+    });
 
 	onkeydown = onkeyup = function(e)
 	{
@@ -56,6 +98,11 @@ console.log("Conn open...");
 	    }
 	    sendDriveInput();
 	}
+
+
+
+
+
 
 	document.getElementById("record-button").onclick = function(e)
 	{
